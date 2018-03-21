@@ -355,7 +355,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			case "m": controls.speed = 30; break;
       case " ": controls.fly = true; break;
       case "h": controls.reset = true; break;
-      case "q": avatar.position.set(10,10,10);break;
+      case "q": controls.move=true;break;
 
 			// switch cameras
 			case "1": gameState.camera = camera; break;
@@ -384,6 +384,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			case "m": controls.speed = 10; break;
       case " ": controls.fly = false; break;
       case "h": controls.reset = false; break;
+			case "q": controls.move=false;break;
 		}
 	}
 
@@ -418,7 +419,10 @@ The user moves a cube around the board trying to knock balls into a cone
       avatar.__dirtyPosition = true;
       avatar.position.set(40,10,40);
     }
-
+    if(controls.move==true){
+			avatar.__dirtyPosition=true;
+			avatar.position.set(10,10,10);
+		}
 	}
 
 
