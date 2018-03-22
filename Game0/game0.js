@@ -10,7 +10,7 @@ The user moves a cube around the board trying to knock balls into a cone
 	// First we declare the variables that hold the objects we need
 	// in the animation code
 	var scene, renderer;  // all threejs programs need these
-	var camera, avatarCam;  // we have two cameras in the main scene
+	var camera, avatarCam,avatarCamnew;  // we have two cameras in the main scene
 	var avatar;
 	// here are some mesh objects ...
 
@@ -24,7 +24,7 @@ The user moves a cube around the board trying to knock balls into a cone
 
 	var controls =
 	     {fwd:false, bwd:false, left:false, right:false,
-				speed:10, fly:false, reset:false,
+				speed:10, fly:false, reset:false, move:false,
 		    camera:camera}
 
 	var gameState =
@@ -86,6 +86,8 @@ The user moves a cube around the board trying to knock balls into a cone
 			var skybox = createSkyBox('sky.jpg',1);
 			scene.add(skybox);
 
+			avatarCamnew=new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			avatarCamnew.position.set(-5,10,5);
 			// create the avatar
 			avatarCam = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
 			avatar = createAvatar();
@@ -93,7 +95,11 @@ The user moves a cube around the board trying to knock balls into a cone
 			avatarCam.translateY(-4);
 			avatarCam.translateZ(3);
 			scene.add(avatar);
+
 			gameState.camera = avatarCam;
+
+
+
 
 			addBalls();
 
@@ -259,7 +265,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		texture.wrapT = THREE.RepeatWrapping;
 		texture.repeat.set( k, k );
 		var material = new THREE.MeshLambertMaterial( { color: 0xffffff,  map: texture ,side:THREE.DoubleSide} );
-		//var pmaterial = new Physijs.createMaterial(material,0.9,0.5);
+		var pmaterial = new Physijs.createMaterial(material,0.9,0.5);
 		//var mesh = new THREE.Mesh( geometry, material );
 		var mesh = new THREE.Mesh( geometry, material, 0 );
 
@@ -285,6 +291,8 @@ The user moves a cube around the board trying to knock balls into a cone
 		avatarCam.position.set(0,4,0);
 		avatarCam.lookAt(0,4,10);
 		mesh.add(avatarCam);
+
+
 
 		return mesh;
 	}
@@ -360,7 +368,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			// switch cameras
 			case "1": gameState.camera = camera; break;
 			case "2": gameState.camera = avatarCam; break;
-
+      case "3":gameState.camera=avatarCamnew;break;
 			// move the camera around, relative to the avatar
 			case "ArrowLeft": avatarCam.translateY(1);break;
 			case "ArrowRight": avatarCam.translateY(-1);break;
@@ -419,7 +427,7 @@ The user moves a cube around the board trying to knock balls into a cone
       avatar.__dirtyPosition = true;
       avatar.position.set(40,10,40);
     }
-    if(controls.move==true){
+    if(controls.move){
 			avatar.__dirtyPosition=true;
 			avatar.position.set(10,10,10);
 		}
@@ -440,6 +448,7 @@ The user moves a cube around the board trying to knock balls into a cone
 
 			case "main":
 				updateAvatar();
+				avatarCamnew.lookAt(avatar.position);
 	    	scene.simulate();
 				if (gameState.camera!= 'none'){
 					renderer.render( scene, gameState.camera );
